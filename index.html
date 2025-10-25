@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Онлайн кнопка с черным квадратом</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px 20px;
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .button-container {
+            margin: 25px 0;
+        }
+        
+        #clickButton {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        #clickButton:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(231, 76, 60, 0.5);
+        }
+        
+        #clickButton:disabled {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 10px rgba(149, 165, 166, 0.3);
+        }
+        
+        #blackSquare {
+            width: 200px;
+            height: 200px;
+            background-color: black;
+            margin: 25px auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: none;
+            transition: transform 0.5s ease;
+        }
+        
+        #blackSquare.visible {
+            display: block;
+            animation: appear 0.8s ease;
+        }
+        
+        @keyframes appear {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .status-container {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .status {
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .winner-message {
+            font-size: 18px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 15px 0;
+        }
+        
+        .users-online {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+        
+        .online-indicator {
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .instructions {
+            background: #fff9e6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #e67e22;
+            border-left: 4px solid #f39c12;
+        }
+        
+        .footer {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            color: #7f8c8d;
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Онлайн Кнопка</h1>
+            <p class="subtitle">Первый нажавший видит черный квадрат, остальные не могут нажать</p>
+        </div>
+        
+        <div class="content">
+            <div id="blackSquare"></div>
+            
+            <div class="button-container">
+                <button id="clickButton">Нажми меня первым!</button>
+            </div>
+            
+            <div class="winner-message" id="winnerMessage"></div>
+            
+            <div class="status-container">
+                <div class="status" id="status">Подключение к серверу...</div>
+                <div class="users-online">
+                    <div class="online-indicator"></div>
+                    <span id="usersCount">1 пользователь онлайн</span>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <p><strong>Как это работает:</strong> Кнопка доступна всем, но только первый пользователь, который нажмет её, увидит черный квадрат. После этого кнопка станет неактивной для всех остальных пользователей в реальном времени.</p>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Работает в реальном времени для всех пользователей</p>
+        </div>
+    </div>
+
+    <!-- Подключаем PubNub для реального времени -->
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.4.0.js"></script>
+    
+    <script>
+        // Инициализация PubNub с бесплатными ключами
+        const pubnub = new PubNub({
+            publishKey: 'demo',
+            subscribeKey: 'demo'
+        });
+        
+        // Элементы DOM
+        const clickButton = document.getElementById('clickButton');
+        const blackSquare = document.getElementById('blackSquare');
+        const status = document.getElementById('status');
+        const winnerMessage = document.getElementById('winnerMessage');
+        const usersCount = document.getElementById('usersCount');
+        
+        // Переменные состояния
+        let isButtonClicked = false;
+        let userId = generateUserId();
+        let onlineUsers = new Set();
+        
+        // Генерация уникального ID пользователя
+        function generateUserId() {
+            return 'user_' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        // Подписка на канал
+        pubnub.subscribe({
+            channels: ['online-button-channel']
+        });
+        
+        // Обработка входящих сообщений
+        pubnub.addListener({
+            message: function(event) {
+                const message = event.message;
+                
+                if (message.type === 'button_clicked') {
+                    // Кто-то нажал кнопку
+                    isButtonClicked = true;
+                    clickButton.disabled = true;
+                    status.textContent = 'Кнопка уже была нажата';
+                    
+                    if (message.userId === userId) {
+                        // Это я нажал кнопку
+                        blackSquare.classList.add('visible');
+                        winnerMessage.textContent = 'Поздравляем! Вы были первым!';
+                    } else {
+                        // Кто-то другой нажал кнопку
+                        winnerMessage.textContent = `Кнопка была нажата другим пользователем`;
+                    }
+                } else if (message.type === 'user_joined') {
+                    // Пользователь присоединился
+                    onlineUsers.add(message.userId);
+                    updateUsersCount();
+                } else if (message.type === 'user_left') {
+                    // Пользователь вышел
+                    onlineUsers.delete(message.userId);
+                    updateUsersCount();
+                } else if (message.type === 'state_request') {
+                    // Запрос текущего состояния
+                    if (isButtonClicked) {
+                        // Отправляем текущее состояние
+                        pubnub.publish({
+                            channel: 'online-button-channel',
+                            message: {
+                                type: 'button_clicked',
+                                userId: message.senderId
+                            }
+                        });
+                    }
+                }
+            },
+            presence: function(event) {
+                // Обработка событий присутствия
+                if (event.action === 'join') {
+                    onlineUsers.add(event.uuid);
+                } else if (event.action === 'leave' || event.action === 'timeout') {
+                    onlineUsers.delete(event.uuid);
+                }
+                updateUsersCount();
+            }
+        });
+        
+        // Функция обновления счетчика пользователей
+        function updateUsersCount() {
+            const count = onlineUsers.size;
+            usersCount.textContent = `${count} ${getUsersWord(count)} онлайн`;
+        }
+        
+        // Функция для правильного склонения слова "пользователь"
+        function getUsersWord(count) {
+            if (count % 10 === 1 && count % 100 !== 11) {
+                return 'пользователь';
+            } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+                return 'пользователя';
+            } else {
+                return 'пользователей';
+            }
+        }
+        
+        // Отправка сообщения о присоединении
+        pubnub.publish({
+            channel: 'online-button-channel',
+            message: {
+                type: 'user_joined',
+                userId: userId
+            }
+        });
+        
+        // Запрос текущего состояния при подключении
+        setTimeout(() => {
+            pubnub.publish({
+                channel: 'online-button-channel',
+                message: {
+                    type: 'state_request',
+                    senderId: userId
+                }
+            });
+            
+            status.textContent = 'Кнопка доступна для нажатия';
+        }, 1000);
+        
+        // Обработчик нажатия на кнопку
+        clickButton.addEventListener('click', () => {
+            if (!isButtonClicked) {
+                isButtonClicked = true;
+                clickButton.disabled = true;
+                blackSquare.classList.add('visible');
+                winnerMessage.textContent = 'Поздравляем! Вы были первым!';
+                status.textContent = 'Вы нажали кнопку первым!';
+                
+                // Отправляем сообщение о нажатии кнопки
+                pubnub.publish({
+                    channel: 'online-button-channel',
+                    message: {
+                        type: 'button_clicked',
+                        userId: userId
+                    }
+                });
+            }
+        });
+        
+        // Обработка ухода со страницы
+        window.addEventListener('beforeunload', () => {
+            pubnub.publish({
+                channel: 'online-button-channel',
+                message: {
+                    type: 'user_left',
+                    userId: userId
+                }
+            });
+        });
+    </script>
+</body>
+</html>
